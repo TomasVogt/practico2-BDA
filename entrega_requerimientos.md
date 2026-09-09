@@ -1,6 +1,6 @@
 # Entrega Requerimientos: Ventas Vehículos BMW (2010-2024)
 
-**Integrantes:** _Santino Vazquez de Novoa, Enzo Parra, Santiago Dhers, Tomas Vogt_
+**Integrantes:** Santino Vazquez de Novoa, Enzo Parra, Santiago Dhers, Tomas Vogt
 
 ---
 
@@ -61,6 +61,8 @@
 - Producto → `Model`
 - Tiempo → `Year`
 
+> **Nota:** esta pregunta en realidad no agrega una perspectiva nueva respecto a la 2, sino que reutiliza Modelo + Tiempo, pero el indicador es distinto: no es un promedio sino una variación calculada entre períodos.
+
 ### Pregunta 4: ¿Qué combinación de color + modelo es más popular en cada región?
 
 **Indicadores:**
@@ -78,7 +80,9 @@
 
 **Perspectivas:**
 - Región → `Region`
-  
+
+> **Nota:** perspectiva Tiempo opcional acá si quieren ver esa variación año a año también, pero la pregunta tal cual está redactada no lo pide explícitamente.
+
 ---
 
 ## Resumen
@@ -94,3 +98,9 @@
 3. Región → `Region`
 4. Combustible → `Fuel_Type`
 5. Color → `Color`
+
+---
+
+## 4. Modelo conceptual
+
+![Modelo Conceptual - Ventas de BMW](modelo_conceptual.png)
