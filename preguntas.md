@@ -1,6 +1,6 @@
 ﻿# practico2-BDA
 
-Posibles preguntas según el posible problema
+Posibles preguntas según el problema a elegir
 
 1. Rendimiento de ventas por región y modelo
     ¿Cuál es el ranking de modelos según Sales_Classification (alta/media/baja) por región?
