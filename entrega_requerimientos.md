@@ -91,29 +91,22 @@
 **Perspectivas:**
 - Región → `Region`
 
-### Indicadores adicionales sugeridos
+### Ideas para futuras preguntas
 
-Además de los indicadores que responden directamente a cada pregunta, el dataset permite construir otros indicadores útiles para enriquecer el análisis sin incorporar nuevas perspectivas:
+- **Precio máximo y mínimo de venta** — rango y dispersión de precios; podría responder algo como "¿qué tan dispersos están los precios dentro de un mismo modelo/región?".
+- **Cantidad de modelos distintos vendidos** — mide diversidad de oferta; útil cruzado con Región o Tiempo, respondería algo como "¿qué regiones ofrecen mayor variedad de modelos?".
+- **Índice de crecimiento acumulado (CAGR) del volumen de ventas 2010-2024** — complementa la variación interanual con una medida de tendencia de largo plazo.
 
-- **Precio promedio por tipo de combustible** (`AVG(Price_USD)` agrupado por `Fuel_Type`) — permite ver si los eléctricos/híbridos se venden a precios distintos de los de combustión.
-- **Precio máximo y precio mínimo de venta** (por modelo o por año) — indicador de rango y dispersión de precios.
-- **Cantidad de modelos distintos vendidos por región** (`COUNT(DISTINCT Model)` por `Region`) — mide la diversidad de oferta por mercado.
-- **Índice de crecimiento acumulado (CAGR) del volumen de ventas 2010-2024**, por modelo — complementa la variación interanual con una medida de tendencia de largo plazo.
-
-> *Nota:* el dataset también incluye `Transmission`, `Engine_Size_L` y `Mileage_KM`, que podrían incorporarse como perspectivas adicionales en una futura iteración si el alcance del trabajo lo requiere (por ejemplo, para analizar precio promedio por transmisión o kilometraje promedio por modelo).
-
+> *Nota:* el dataset también incluye `Transmission`, `Engine_Size_L` y `Mileage_KM`, que podrían incorporarse como perspectivas  si en el futuro agregaramos alguna pregunta que las necesite.
 ---
 
 ## Resumen
 
-**Indicadores (7 en total):**
+**Indicadores (4 en total):**
 1. Volumen total de ventas
 2. Precio promedio de venta
 3. Variación interanual de ventas
 4. Participación porcentual por tipo de combustible
-5. Precio promedio por tipo de combustible
-6. Precio máximo y mínimo de venta
-7. Cantidad de modelos distintos por región
 
 **Perspectivas (5 en total):**
 1. Tiempo → `Year`
@@ -151,16 +144,10 @@ flowchart LR
         I2[Precio promedio de venta]
         I3[Variación interanual de ventas]
         I4[Participación % por tipo de combustible]
-        I5[Precio promedio por tipo de combustible]
-        I6[Precio máximo y mínimo de venta]
-        I7[Cantidad de modelos por región]
     end
 
     V --> I1
     V --> I2
     V --> I3
     V --> I4
-    V --> I5
-    V --> I6
-    V --> I7
 ```
