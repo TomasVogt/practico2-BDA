@@ -6,9 +6,9 @@
 
 ## 1. Presentación del tema y la fuente de datos
 
-**Tema elegido:** Ventas de vehículos BMW a nivel global en un período de 2010 a 2024.
+**Tema elegido:** Ventas de vehículos BMW a nivel global en el período 2010-2024.
 
-**Proceso de negocio a analizar:** Todos los años, BMW vende sus distintos modelos en mercados de todo el mundo, y cada venta atrae un montón de decisiones previas, como qué modelo se ofrece, con qué motor y combustible, qué transmisión, en qué color, a qué precio, y en qué región. Con el correr de los años esas decisiones van cambiando: la empresa lanza modelos nuevos, cambia los precios, potencia más la venta de los híbridos o eléctricos según la región; y el resultado de todo eso que queda debe ser resumido en cuánto se vendió y qué tan bien le fue a cada venta. Es decir, se deben clasificar las ventas en pos de impulsar ciertos mercados regionales que pueden no estar funcionando, encontrar patrones de compra en base a regiones y paso del tiempo, así como también cambios en los precios.
+**Proceso de negocio a analizar:** Todos los años, BMW vende sus distintos modelos en mercados de todo el mundo, y cada venta involucra un conjunto de decisiones previas: qué modelo se ofrece, con qué motor y combustible, qué transmisión, en qué color, a qué precio y en qué región. Con el correr de los años esas decisiones van cambiando: la empresa lanza modelos nuevos, ajusta precios y potencia la venta de híbridos o eléctricos según la región. El resultado de todo eso debe resumirse en cuánto se vendió y qué tan bien le fue a cada venta, es decir, se busca clasificar las ventas para impulsar mercados regionales que puedan no estar funcionando, encontrar patrones de compra en base a región y paso del tiempo, y detectar cambios en los precios.
 
 **Fuente del archivo:**
 - **Portal:** Kaggle
@@ -16,7 +16,19 @@
 - **URL:** https://www.kaggle.com/datasets/y0ussefkandil/bmw-sales2010-2024
 - **Fecha de descarga:** 09/09/2026
 
-**Descripción general del contenido:** el archivo contiene 50.000 registros de ventas de BMW entre 2010 y 2024, con información sobre el modelo vendido, el año, la región donde se vendió, el color, el tipo de combustible, el tipo de transmisión, el tamaño del motor, el kilometraje, el precio en dólares, el volumen de ventas y una clasificación de la venta.
+**Descripción general del contenido:** el archivo contiene 50.000 registros de ventas de BMW entre 2010 y 2024, con los siguientes campos por registro:
+
+- `Model` — modelo vendido
+- `Year` — año de la venta
+- `Region` — región donde se vendió
+- `Color` — color del vehículo
+- `Fuel_Type` — tipo de combustible
+- `Transmission` — tipo de transmisión
+- `Engine_Size_L` — tamaño del motor
+- `Mileage_KM` — kilometraje
+- `Price_USD` — precio en dólares
+- `Sales_Volume` — volumen de ventas
+- `Sales_Classification` — clasificación de la venta
 
 ---
 
@@ -78,14 +90,30 @@
 
 **Perspectivas:**
 - Región → `Region`
+
+### Indicadores adicionales sugeridos
+
+Además de los indicadores que responden directamente a cada pregunta, el dataset permite construir otros indicadores útiles para enriquecer el análisis sin incorporar nuevas perspectivas:
+
+- **Precio promedio por tipo de combustible** (`AVG(Price_USD)` agrupado por `Fuel_Type`) — permite ver si los eléctricos/híbridos se venden a precios distintos de los de combustión.
+- **Precio máximo y precio mínimo de venta** (por modelo o por año) — indicador de rango y dispersión de precios.
+- **Cantidad de modelos distintos vendidos por región** (`COUNT(DISTINCT Model)` por `Region`) — mide la diversidad de oferta por mercado.
+- **Índice de crecimiento acumulado (CAGR) del volumen de ventas 2010-2024**, por modelo — complementa la variación interanual con una medida de tendencia de largo plazo.
+
+> *Nota:* el dataset también incluye `Transmission`, `Engine_Size_L` y `Mileage_KM`, que podrían incorporarse como perspectivas adicionales en una futura iteración si el alcance del trabajo lo requiere (por ejemplo, para analizar precio promedio por transmisión o kilometraje promedio por modelo).
+
 ---
 
 ## Resumen
 
-**Indicadores (3 en total):**
+**Indicadores (7 en total):**
 1. Volumen total de ventas
 2. Precio promedio de venta
-3. Variación de ventas interanual
+3. Variación interanual de ventas
+4. Participación porcentual por tipo de combustible
+5. Precio promedio por tipo de combustible
+6. Precio máximo y mínimo de venta
+7. Cantidad de modelos distintos por región
 
 **Perspectivas (5 en total):**
 1. Tiempo → `Year`
@@ -98,4 +126,41 @@
 
 ## 4. Modelo conceptual
 
-![Modelo Conceptual - Ventas de BMW](modelo_conceptual.png)
+```mermaid
+flowchart LR
+    subgraph PERSPECTIVAS
+        direction TB
+        P1[Tiempo<br/>Year]
+        P2[Producto<br/>Model]
+        P3[Región<br/>Region]
+        P4[Combustible<br/>Fuel_Type]
+        P5[Color]
+    end
+
+    V((VENTAS DE BMW))
+
+    P1 --> V
+    P2 --> V
+    P3 --> V
+    P4 --> V
+    P5 --> V
+
+    subgraph INDICADORES
+        direction TB
+        I1[Volumen total de ventas]
+        I2[Precio promedio de venta]
+        I3[Variación interanual de ventas]
+        I4[Participación % por tipo de combustible]
+        I5[Precio promedio por tipo de combustible]
+        I6[Precio máximo y mínimo de venta]
+        I7[Cantidad de modelos por región]
+    end
+
+    V --> I1
+    V --> I2
+    V --> I3
+    V --> I4
+    V --> I5
+    V --> I6
+    V --> I7
+```
