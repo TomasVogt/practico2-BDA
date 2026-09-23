@@ -4,7 +4,7 @@
 
 **Punto de partida:** modelo conceptual y preguntas de negocio de `entrega_requerimientos.md` (Paso 1).
 
-**Archivo analizado:** `BMW_sales_data__2010-2024_.csv` — 50.000 filas, 11 columnas. El dataset de Kaggle no incluye un diccionario de datos separado, por lo que el significado y tipo de cada columna se infirió inspeccionando los valores del archivo.
+**Archivo analizado:** `BMW_sales_data__2010-2024_.csv` — 50.000 filas, 11 columnas. El dataset que utilizamos de Kaggle no incluye un diccionario de datos, por lo que el significado y tipo de cada columna lo dedujimos inspeccionando los valores del archivo.
 
 ---
 
@@ -23,9 +23,6 @@
 | `Price_USD` | Precio de venta, en dólares | 30.000 – 119.998 | Numérica (entero) |
 | `Sales_Volume` | Cantidad de unidades vendidas correspondientes a ese registro (es la medida del hecho, no "1 fila = 1 auto") | 100 – 9.999 | Numérica (entero) |
 | `Sales_Classification` | Clasificación de la venta, **derivada** de `Sales_Volume` | 2 valores: `High` (si `Sales_Volume ≥ 7000`), `Low` (si `Sales_Volume < 7000`) | Categórica (texto) |
-
-**Calidad de datos:** sin valores nulos en ninguna columna, sin filas duplicadas. Se revisaron las 6 columnas categóricas buscando inconsistencias de texto (espacios, mayúsculas/minúsculas) y no se encontró ninguna — el conteo de valores únicos no cambia al normalizar (ver punto 4).
-
 ---
 
 ## 2. a) Conformar indicadores
@@ -57,16 +54,14 @@
 
 ## 4. c) Nivel de granularidad
 
-- **Tiempo → `Year`:** es la única columna temporal disponible en el archivo (no hay mes, trimestre ni día), por lo que el nivel de agrupamiento queda fijado en **año**. Coincide con lo asumido en el Paso 1; no hay margen para bajar a un grano más fino con este dataset.
-- **Producto → `Model`:** se incluye tal cual (11 valores). Es la única columna que identifica el producto vendido y es requerida por las preguntas 2, 3 y 4.
-- **Región → `Region`:** se incluye tal cual (6 valores). Requerida por las preguntas 4 y 5.
-- **Color → `Color`:** se incluye tal cual (6 valores). Requerida por la pregunta 4.
-- **Combustible → `Fuel_Type`:** se incluye tal cual (4 valores). Requerida por la pregunta 1 (ver hallazgo más abajo).
+- **Tiempo → `Year`:** en este caso, es la única columna temporal disponible en el archivo (no hay mes, trimestre ni día), entonces el nivel de agrupamiento queda fijado en **año**. Por ende no nos va a ser posible tener mas profundidad en cuanto a la variable temporal.
+- **Producto → `Model`:** es la única columna que va a identificar el producto vendido y la usaremos en las preguntas 2, 3 y 4.
+- **Región → `Region`:** se incluye tal cual (6 valores). Requerida para las preguntas 4 y 5.
+- **Color → `Color`:** se incluye tal cual (6 valores). Requerida para la pregunta 4.
+- **Combustible → `Fuel_Type`:** se incluye tal cual (4 valores). Requerida por la pregunta 1 
 - **Columnas fuera de alcance:** `Transmission`, `Engine_Size_L`, `Mileage_KM` y `Sales_Classification` no se incorporan como perspectivas ni indicadores en esta iteración — ninguna de las 5 preguntas del Paso 1 las requiere. `Sales_Classification`, además, es un campo derivado de `Sales_Volume` (umbral `≥ 7000` = `High`), por lo que sumarlo sería redundante con el indicador "Volumen total de ventas" ya definido. Quedan documentadas como ideas para una futura pregunta (ver Paso 1).
 
-**Consistencia de valores de texto:** se compararon las 6 columnas categóricas contra su versión sin espacios y en minúsculas; el número de valores únicos no cambió en ninguna, por lo que no se detectó ninguna inconsistencia (variantes de escritura, mayúsculas mezcladas, espacios extra). No se requiere normalización de texto ni mapeo manual.
-
-**Hallazgo sobre la Pregunta 1 (mezcla de combustibles por año):** al cruzar `Fuel_Type` por `Year`, la participación de cada tipo de combustible se mantiene estable en ~25% (± 2 puntos porcentuales) en los 15 años del dataset, sin una tendencia de crecimiento de híbridos/eléctricos ni de caída de la combustión. Esto es consistente con el origen sintético del dataset. Se decidió **mantener la pregunta y el indicador tal como están definidos**, documentando este hallazgo como resultado esperado — el análisis mostrará ausencia de tendencia en lugar de una evolución real, lo cual es en sí mismo una conclusión válida del análisis.
+**Consistencia de valores de texto:** se compararon las 6 columnas categóricas contra su versión sin espacios y en minúsculas. El número de valores únicos no cambió en ninguna, por lo que no logramos detectar ninguna inconsistencia (variantes de escritura, mayúsculas mezcladas, espacios extra). No se requiere en este caso de normalización de texto ni de mapeo manual.
 
 ---
 
