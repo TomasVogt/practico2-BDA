@@ -1,10 +1,15 @@
-# Paso 3 — Modelo Lógico del DW (HEFESTO)
+# Entrega Modelo Logico: Ventas Vehículos BMW (2010-2024)
+
+**Integrantes:** Santino Vazquez de Novoa, Enzo Parra, Santiago Dhers, Tomas Vogt
+
+
+---
 
 ## a) Tipo de Modelo Lógico
 
 El dataset y los requerimientos del proyecto responden a un único proceso analítico de negocio: las ventas de vehículos BMW. Por lo tanto, la elección es usar un **modelo en estrella**, ya que:
 
-- No hay jerarquías normalizadas complejas: ninguna de las 5 perspectivas seleccionadas (Tiempo, Producto, Región, Combustible, Color) tiene estructuras internas que ameriten desglosarse en tablas secundarias (no hay, por ejemplo, una jerarquía Región → País → Ciudad).
+- No hay jerarquías normalizadas complejas: ninguna de las 5 perspectivas seleccionadas (Tiempo, Producto, Región, Combustible, Color) tiene estructuras internas que haya que descomponer en tablas secundarias (no hay, por ejemplo, una jerarquía Región → País → Ciudad).
 - Se trata de un único proceso de negocio (ventas), no de varios procesos que compartan dimensiones, por lo que no se justifica una constelación de hechos.
 - El modelo en estrella minimiza el número de combinaciones de tablas (joins) necesarias en las consultas de inteligencia de negocios, optimizando la velocidad de cálculo e integración de los indicadores analíticos.
 
@@ -46,9 +51,7 @@ Se define una tabla de hechos central denominada **Hecho_Ventas**:
   - `volumen_ventas` (Entero): medida proveniente de `Sales_Volume`. Permite calcular el Volumen total de ventas (`SUM`), la Variación interanual de ventas y la Participación % por tipo de combustible.
   - `precio_usd` (Decimal): medida proveniente de `Price_USD`. Permite calcular el Precio promedio de venta (`AVG`).
 
-> **Nota metodológica HEFESTO (indicadores derivados):** la Variación interanual y la Participación % no se persisten como columnas en la tabla de hechos, sino que se calculan dinámicamente en la capa de BI a partir de las agregaciones sumarias de `volumen_ventas` agrupadas por las dimensiones correspondientes.
-
-> **Nota metodológica HEFESTO (grano y colisión de claves):** dado que el grano de `Hecho_Ventas` es la combinación `(año, modelo, región, combustible, color)`, y el archivo original tiene 50.000 filas para un espacio de combinaciones posibles mucho menor (16 años × 11 modelos × 6 regiones × 4 combustibles × 6 colores ≈ 25.344 combinaciones), es esperable que **varias filas del archivo original compartan la misma clave compuesta**. Esto se resuelve en el Paso 4 agregando esas filas en una sola fila de hechos: `volumen_ventas` se suma (`SUM`) y `precio_usd` se promedia (`AVG`) entre todas las filas originales que caen en la misma combinación, antes de insertar en `Hecho_Ventas`.
+> **Nota metodológica:** la Variación interanual y la Participación % no se persisten como columnas en la tabla de hechos, sino que se calculan dinámicamente en la capa de BI a partir de las agregaciones sumarias de `volumen_ventas` agrupadas por las dimensiones correspondientes.
 
 ## d) Uniones y Diagrama del Modelo Lógico Final
 
