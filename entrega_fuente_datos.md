@@ -5,6 +5,7 @@
 **Punto de partida:** modelo conceptual y preguntas de negocio de `entrega_requerimientos.md` (Paso 1).
 
 **Archivo analizado:** `BMW_sales_data__2010-2024_.csv` — 50.000 filas, 11 columnas. El dataset que utilizamos de Kaggle no incluye un diccionario de datos, por lo que el significado y tipo de cada columna lo dedujimos inspeccionando los valores del archivo.
+- **Link de descarga:** https://www.kaggle.com/datasets/y0ussefkandil/bmw-sales2010-2024
 
 ---
 
