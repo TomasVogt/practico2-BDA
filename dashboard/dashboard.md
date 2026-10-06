@@ -1,464 +1,178 @@
-# Dashboard Analítico: Modelo Estrella Ventas BMW (dw_bmw_ventas)
+# Dashboard Analítico: Modelo Estrella Ventas BMW (`dw_bmw_ventas`)
 
-A continuación se responden las preguntas de negocio de la Fase 1, ejecutando consultas SQL sobre el modelo lógico poblado en MySQL.
+Respuesta a cada pregunta de negocio del Paso 1. Todas las consultas se ejecutaron en MySQL **sobre el modelo estrella** (`Hecho_Ventas` + `Dim_*`), no sobre el CSV original. Los resultados se exportaron a `pregunta1.csv … pregunta5.csv` y los gráficos se generaron con Python (`matplotlib`) a partir de esos archivos (script: `graficos.py`; imágenes en `graficos/`).
 
-### Pregunta 1: ¿Cómo cambió la mezcla de combustibles vendidos a lo largo de los años?
+> **Aclaración sobre la lectura de los datos.** El dataset de Kaggle tiene una distribución prácticamente uniforme (parece generado sintéticamente): casi todas las diferencias entre categorías son chicas. Por eso en cada pregunta se indica qué diferencias son reales y cuáles están dentro del ruido.
 
-**Consulta SQL:**
+---
+
+## Pregunta 1: ¿Cómo cambió la mezcla de combustibles vendidos a lo largo de los años?
+
 ```sql
-SELECT 
-    t.anio, 
-    c.tipo_combustible, 
-    SUM(h.volumen_ventas) as total_ventas
+SELECT t.anio, c.tipo_combustible, SUM(h.volumen_ventas) AS total_ventas
 FROM Hecho_Ventas h
-JOIN Dim_Tiempo t ON h.id_tiempo = t.id_tiempo
-JOIN Dim_Combustible c ON h.id_combustible = c.id_combustible
+JOIN Dim_Tiempo t       ON h.id_tiempo = t.id_tiempo
+JOIN Dim_Combustible c  ON h.id_combustible = c.id_combustible
 GROUP BY t.anio, c.tipo_combustible
 ORDER BY t.anio, c.tipo_combustible;
 ```
 
-|anio|tipo_combustible|total_ventas|
-|----|----------------|------------|
-|2010|Diesel          |4086808     |
-|2010|Electric        |4205554     |
-|2010|Hybrid          |4415611     |
-|2010|Petrol          |4225472     |
-|2011|Diesel          |4019361     |
-|2011|Electric        |4345538     |
-|2011|Hybrid          |4222305     |
-|2011|Petrol          |4171737     |
-|2012|Diesel          |4087221     |
-|2012|Electric        |4242466     |
-|2012|Hybrid          |4347806     |
-|2012|Petrol          |4074402     |
-|2013|Diesel          |4198426     |
-|2013|Electric        |4117556     |
-|2013|Hybrid          |4278494     |
-|2013|Petrol          |4272257     |
-|2014|Diesel          |4527336     |
-|2014|Electric        |4022785     |
-|2014|Hybrid          |4434340     |
-|2014|Petrol          |3974499     |
-|2015|Diesel          |4193633     |
-|2015|Electric        |4215113     |
-|2015|Hybrid          |4307029     |
-|2015|Petrol          |4294432     |
-|2016|Diesel          |4262129     |
-|2016|Electric        |4199882     |
-|2016|Hybrid          |4111145     |
-|2016|Petrol          |4384394     |
-|2017|Diesel          |4031905     |
-|2017|Electric        |4116302     |
-|2017|Hybrid          |4219927     |
-|2017|Petrol          |4252677     |
-|2018|Diesel          |3892638     |
-|2018|Electric        |4325544     |
-|2018|Hybrid          |4021011     |
-|2018|Petrol          |4173080     |
-|2019|Diesel          |4099576     |
-|2019|Electric        |4184558     |
-|2019|Hybrid          |4461759     |
-|2019|Petrol          |4446063     |
-|2020|Diesel          |4152177     |
-|2020|Electric        |3962571     |
-|2020|Hybrid          |4032718     |
-|2020|Petrol          |4163377     |
-|2021|Diesel          |4137203     |
-|2021|Electric        |4239630     |
-|2021|Hybrid          |4331469     |
-|2021|Petrol          |4176364     |
-|2022|Diesel          |4474126     |
-|2022|Electric        |4383912     |
-|2022|Hybrid          |4687463     |
-|2022|Petrol          |4375445     |
-|2023|Diesel          |3842804     |
-|2023|Electric        |4305554     |
-|2023|Hybrid          |4013825     |
-|2023|Petrol          |4106471     |
-|2024|Diesel          |4356475     |
-|2024|Electric        |4290700     |
-|2024|Hybrid          |4647195     |
-|2024|Petrol          |4233484     |
+La columna `participacion_%` es el indicador "Participación % por tipo de combustible" (`total_ventas / total del año × 100`), calculado en la capa de BI sobre el resultado de la consulta.
 
+|anio|tipo_combustible|total_ventas|participacion_%|
+|---|---|---|---|
+|2010|Diesel|4086808|24.13|
+|2010|Electric|4205554|24.84|
+|2010|Hybrid|4415611|26.08|
+|2010|Petrol|4225472|24.95|
+|2011|Diesel|4019361|23.98|
+|2011|Electric|4345538|25.93|
+|2011|Hybrid|4222305|25.19|
+|2011|Petrol|4171737|24.89|
+|2012|Diesel|4087221|24.4|
+|2012|Electric|4242466|25.33|
+|2012|Hybrid|4347806|25.95|
+|2012|Petrol|4074402|24.32|
+|2013|Diesel|4198426|24.89|
+|2013|Electric|4117556|24.41|
+|2013|Hybrid|4278494|25.37|
+|2013|Petrol|4272257|25.33|
+|2014|Diesel|4527336|26.7|
+|2014|Electric|4022785|23.72|
+|2014|Hybrid|4434340|26.15|
+|2014|Petrol|3974499|23.44|
+|2015|Diesel|4193633|24.65|
+|2015|Electric|4215113|24.78|
+|2015|Hybrid|4307029|25.32|
+|2015|Petrol|4294432|25.25|
+|2016|Diesel|4262129|25.13|
+|2016|Electric|4199882|24.77|
+|2016|Hybrid|4111145|24.24|
+|2016|Petrol|4384394|25.86|
+|2017|Diesel|4031905|24.26|
+|2017|Electric|4116302|24.77|
+|2017|Hybrid|4219927|25.39|
+|2017|Petrol|4252677|25.59|
+|2018|Diesel|3892638|23.72|
+|2018|Electric|4325544|26.36|
+|2018|Hybrid|4021011|24.5|
+|2018|Petrol|4173080|25.43|
+|2019|Diesel|4099576|23.85|
+|2019|Electric|4184558|24.34|
+|2019|Hybrid|4461759|25.95|
+|2019|Petrol|4446063|25.86|
+|2020|Diesel|4152177|25.46|
+|2020|Electric|3962571|24.29|
+|2020|Hybrid|4032718|24.72|
+|2020|Petrol|4163377|25.53|
+|2021|Diesel|4137203|24.5|
+|2021|Electric|4239630|25.11|
+|2021|Hybrid|4331469|25.65|
+|2021|Petrol|4176364|24.73|
+|2022|Diesel|4474126|24.97|
+|2022|Electric|4383912|24.46|
+|2022|Hybrid|4687463|26.16|
+|2022|Petrol|4375445|24.42|
+|2023|Diesel|3842804|23.62|
+|2023|Electric|4305554|26.47|
+|2023|Hybrid|4013825|24.67|
+|2023|Petrol|4106471|25.24|
+|2024|Diesel|4356475|24.85|
+|2024|Electric|4290700|24.48|
+|2024|Hybrid|4647195|26.51|
+|2024|Petrol|4233484|24.15|
 
+![P1 - Mezcla de combustibles](dashboard/graficos/p1_mezcla_combustibles.png)
 
-### Pregunta 2: ¿Cuál es el precio promedio de venta por modelo y por año?
+**Lectura:** la mezcla casi no cambió. Los cuatro combustibles se mueven entre 23,4 % y 26,7 % del volumen anual, sin una tendencia sostenida: no hay un desplazamiento de combustión hacia híbrido o eléctrico. Híbrido es el que tiene mayor participación promedio (25,5 %) y cierra 2024 como líder (26,5 %); Diésel y Nafta no muestran caída sostenida.
+
+---
+
+## Pregunta 2: ¿Cuál es el precio promedio de venta por modelo y por año?
+
 ```sql
-SELECT 
-    t.anio, 
-    p.modelo, 
-    ROUND(AVG(h.precio_usd), 2) as precio_promedio
+SELECT t.anio, p.modelo, ROUND(AVG(h.precio_usd), 2) AS precio_promedio
 FROM Hecho_Ventas h
-JOIN Dim_Tiempo t ON h.id_tiempo = t.id_tiempo
-JOIN Dim_Producto p ON h.id_producto = p.id_producto
+JOIN Dim_Tiempo t     ON h.id_tiempo = t.id_tiempo
+JOIN Dim_Producto p   ON h.id_producto = p.id_producto
 GROUP BY t.anio, p.modelo
 ORDER BY t.anio, p.modelo;
 ```
 
-|anio|modelo  |precio_promedio|
-|----|--------|---------------|
-|2010|3 Series|74360.49       |
-|2010|5 Series|71147.38       |
-|2010|7 Series|76501.16       |
-|2010|I3      |74255.14       |
-|2010|I8      |75699.24       |
-|2010|M3      |76701.92       |
-|2010|M5      |70739.24       |
-|2010|X1      |77541.29       |
-|2010|X3      |75453.46       |
-|2010|X5      |75534.06       |
-|2010|X6      |73463.96       |
-|2011|3 Series|76071.26       |
-|2011|5 Series|77045.30       |
-|2011|7 Series|73830.81       |
-|2011|I3      |74382.56       |
-|2011|I8      |76910.50       |
-|2011|M3      |76298.56       |
-|2011|M5      |75510.86       |
-|2011|X1      |74665.42       |
-|2011|X3      |76229.32       |
-|2011|X5      |72985.77       |
-|2011|X6      |73071.49       |
-|2012|3 Series|74785.89       |
-|2012|5 Series|76897.73       |
-|2012|7 Series|74827.31       |
-|2012|I3      |74500.28       |
-|2012|I8      |76528.36       |
-|2012|M3      |74929.60       |
-|2012|M5      |75896.53       |
-|2012|X1      |75148.49       |
-|2012|X3      |76795.33       |
-|2012|X5      |77041.01       |
-|2012|X6      |72640.22       |
-|2013|3 Series|72953.81       |
-|2013|5 Series|74402.79       |
-|2013|7 Series|76354.79       |
-|2013|I3      |72595.89       |
-|2013|I8      |76331.70       |
-|2013|M3      |75287.03       |
-|2013|M5      |71728.98       |
-|2013|X1      |72742.99       |
-|2013|X3      |75461.46       |
-|2013|X5      |75198.48       |
-|2013|X6      |71684.51       |
-|2014|3 Series|75368.00       |
-|2014|5 Series|72574.61       |
-|2014|7 Series|76845.65       |
-|2014|I3      |73338.38       |
-|2014|I8      |73458.72       |
-|2014|M3      |74555.90       |
-|2014|M5      |72115.71       |
-|2014|X1      |79039.00       |
-|2014|X3      |71992.18       |
-|2014|X5      |72963.27       |
-|2014|X6      |77052.66       |
-|2015|3 Series|75066.30       |
-|2015|5 Series|74222.30       |
-|2015|7 Series|74551.47       |
-|2015|I3      |76352.11       |
-|2015|I8      |72357.02       |
-|2015|M3      |71904.44       |
-|2015|M5      |71387.02       |
-|2015|X1      |74514.11       |
-|2015|X3      |75054.23       |
-|2015|X5      |73853.34       |
-|2015|X6      |72198.60       |
-|2016|3 Series|76145.18       |
-|2016|5 Series|77613.20       |
-|2016|7 Series|78641.35       |
-|2016|I3      |73748.07       |
-|2016|I8      |72848.61       |
-|2016|M3      |76014.45       |
-|2016|M5      |77603.06       |
-|2016|X1      |74769.17       |
-|2016|X3      |75379.22       |
-|2016|X5      |75798.88       |
-|2016|X6      |73664.83       |
-|2017|3 Series|74881.28       |
-|2017|5 Series|73822.52       |
-|2017|7 Series|75866.26       |
-|2017|I3      |76654.42       |
-|2017|I8      |75385.54       |
-|2017|M3      |71481.55       |
-|2017|M5      |77636.65       |
-|2017|X1      |77272.05       |
-|2017|X3      |74055.32       |
-|2017|X5      |77697.39       |
-|2017|X6      |77609.76       |
-|2018|3 Series|74864.34       |
-|2018|5 Series|75005.98       |
-|2018|7 Series|75186.66       |
-|2018|I3      |76330.95       |
-|2018|I8      |77017.64       |
-|2018|M3      |73903.19       |
-|2018|M5      |75115.37       |
-|2018|X1      |73950.53       |
-|2018|X3      |77670.07       |
-|2018|X5      |78315.29       |
-|2018|X6      |75011.46       |
-|2019|3 Series|77187.41       |
-|2019|5 Series|74306.73       |
-|2019|7 Series|78596.44       |
-|2019|I3      |74912.24       |
-|2019|I8      |76811.04       |
-|2019|M3      |73210.00       |
-|2019|M5      |76566.27       |
-|2019|X1      |75053.42       |
-|2019|X3      |74770.01       |
-|2019|X5      |73302.20       |
-|2019|X6      |73425.99       |
-|2020|3 Series|78529.48       |
-|2020|5 Series|75643.02       |
-|2020|7 Series|73848.40       |
-|2020|I3      |73325.86       |
-|2020|I8      |75536.16       |
-|2020|M3      |76042.73       |
-|2020|M5      |76478.49       |
-|2020|X1      |73552.30       |
-|2020|X3      |75874.17       |
-|2020|X5      |72708.28       |
-|2020|X6      |75146.60       |
-|2021|3 Series|75633.42       |
-|2021|5 Series|74931.03       |
-|2021|7 Series|75237.70       |
-|2021|I3      |74593.87       |
-|2021|I8      |74388.91       |
-|2021|M3      |75946.29       |
-|2021|M5      |74167.68       |
-|2021|X1      |76966.09       |
-|2021|X3      |74941.94       |
-|2021|X5      |76849.08       |
-|2021|X6      |73622.69       |
-|2022|3 Series|74582.22       |
-|2022|5 Series|77317.29       |
-|2022|7 Series|74834.04       |
-|2022|I3      |75838.33       |
-|2022|I8      |74880.94       |
-|2022|M3      |74557.62       |
-|2022|M5      |77882.22       |
-|2022|X1      |74406.81       |
-|2022|X3      |74676.02       |
-|2022|X5      |73068.19       |
-|2022|X6      |76692.45       |
-|2023|3 Series|76652.49       |
-|2023|5 Series|76325.58       |
-|2023|7 Series|77754.89       |
-|2023|I3      |73285.81       |
-|2023|I8      |76168.77       |
-|2023|M3      |76291.68       |
-|2023|M5      |73602.85       |
-|2023|X1      |76999.59       |
-|2023|X3      |71361.11       |
-|2023|X5      |72643.12       |
-|2023|X6      |75274.11       |
-|2024|3 Series|75706.45       |
-|2024|5 Series|75825.12       |
-|2024|7 Series|76225.21       |
-|2024|I3      |73674.25       |
-|2024|I8      |77825.82       |
-|2024|M3      |72725.66       |
-|2024|M5      |72379.41       |
-|2024|X1      |76534.27       |
-|2024|X3      |74065.19       |
-|2024|X5      |73466.98       |
-|2024|X6      |75274.07       |
+El resultado tiene 165 filas (11 modelos × 15 años). Se muestra pivotado (modelo × año) para que sea legible; los valores son exactamente los de la consulta.
 
+|modelo|2010|2011|2012|2013|2014|2015|2016|2017|2018|2019|2020|2021|2022|2023|2024|
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+|3 Series|74360.49|76071.26|74785.89|72953.81|75368.0|75066.3|76145.18|74881.28|74864.34|77187.41|78529.48|75633.42|74582.22|76652.49|75706.45|
+|5 Series|71147.38|77045.3|76897.73|74402.79|72574.61|74222.3|77613.2|73822.52|75005.98|74306.73|75643.02|74931.03|77317.29|76325.58|75825.12|
+|7 Series|76501.16|73830.81|74827.31|76354.79|76845.65|74551.47|78641.35|75866.26|75186.66|78596.44|73848.4|75237.7|74834.04|77754.89|76225.21|
+|I3|74255.14|74382.56|74500.28|72595.89|73338.38|76352.11|73748.07|76654.42|76330.95|74912.24|73325.86|74593.87|75838.33|73285.81|73674.25|
+|I8|75699.24|76910.5|76528.36|76331.7|73458.72|72357.02|72848.61|75385.54|77017.64|76811.04|75536.16|74388.91|74880.94|76168.77|77825.82|
+|M3|76701.92|76298.56|74929.6|75287.03|74555.9|71904.44|76014.45|71481.55|73903.19|73210.0|76042.73|75946.29|74557.62|76291.68|72725.66|
+|M5|70739.24|75510.86|75896.53|71728.98|72115.71|71387.02|77603.06|77636.65|75115.37|76566.27|76478.49|74167.68|77882.22|73602.85|72379.41|
+|X1|77541.29|74665.42|75148.49|72742.99|79039.0|74514.11|74769.17|77272.05|73950.53|75053.42|73552.3|76966.09|74406.81|76999.59|76534.27|
+|X3|75453.46|76229.32|76795.33|75461.46|71992.18|75054.23|75379.22|74055.32|77670.07|74770.01|75874.17|74941.94|74676.02|71361.11|74065.19|
+|X5|75534.06|72985.77|77041.01|75198.48|72963.27|73853.34|75798.88|77697.39|78315.29|73302.2|72708.28|76849.08|73068.19|72643.12|73466.98|
+|X6|73463.96|73071.49|72640.22|71684.51|77052.66|72198.6|73664.83|77609.76|75011.46|73425.99|75146.6|73622.69|76692.45|75274.11|75274.07|
 
+![P2 - Precio promedio por modelo y año](dashboard/graficos/p2_precio_modelo_anio.png)
 
-### Pregunta 3: ¿Qué modelos perdieron ventas y cuáles crecieron (variación interanual)?
+**Lectura:** el precio promedio se mantiene en una banda angosta, entre USD 70.739 (M5, 2010) y USD 79.039 (X1, 2014). No hay inflación de precios ni un modelo que se despegue sistemáticamente de los demás.
+
+---
+
+## Pregunta 3: ¿Qué modelos perdieron ventas y cuáles crecieron (variación interanual)?
+
 ```sql
 WITH VentasAnuales AS (
-    SELECT 
-        t.anio, 
-        p.modelo, 
-        SUM(h.volumen_ventas) as volumen_actual
+    SELECT t.anio, p.modelo, SUM(h.volumen_ventas) AS volumen_actual
     FROM Hecho_Ventas h
-    JOIN Dim_Tiempo t ON h.id_tiempo = t.id_tiempo
-    JOIN Dim_Producto p ON h.id_producto = p.id_producto
+    JOIN Dim_Tiempo t    ON h.id_tiempo = t.id_tiempo
+    JOIN Dim_Producto p  ON h.id_producto = p.id_producto
     GROUP BY t.anio, p.modelo
 )
-SELECT 
-    v1.anio as anio_actual,
-    v1.modelo,
-    v2.volumen_actual as ventas_anio_anterior,
-    v1.volumen_actual as ventas_anio_actual,
-    ROUND(((v1.volumen_actual - v2.volumen_actual) / v2.volumen_actual) * 100, 2) as variacion_porcentual
+SELECT v1.anio AS anio_actual, v1.modelo,
+       v2.volumen_actual AS ventas_anio_anterior,
+       v1.volumen_actual AS ventas_anio_actual,
+       ROUND(((v1.volumen_actual - v2.volumen_actual) / v2.volumen_actual) * 100, 2) AS variacion_porcentual
 FROM VentasAnuales v1
 JOIN VentasAnuales v2 ON v1.modelo = v2.modelo AND v1.anio = v2.anio + 1
 ORDER BY v1.modelo, v1.anio;
 ```
 
-|anio_actual|modelo  |ventas_anio_anterior|ventas_anio_actual|variacion_porcentual|
-|-----------|--------|--------------------|------------------|--------------------|
-|2011       |3 Series|1647769             |1473102           |-10.60              |
-|2012       |3 Series|1473102             |1378152           |-6.45               |
-|2013       |3 Series|1378152             |1448530           |5.11                |
-|2014       |3 Series|1448530             |1682545           |16.16               |
-|2015       |3 Series|1682545             |1620499           |-3.69               |
-|2016       |3 Series|1620499             |1712098           |5.65                |
-|2017       |3 Series|1712098             |1497382           |-12.54              |
-|2018       |3 Series|1497382             |1620038           |8.19                |
-|2019       |3 Series|1620038             |1459935           |-9.88               |
-|2020       |3 Series|1459935             |1537651           |5.32                |
-|2021       |3 Series|1537651             |1579384           |2.71                |
-|2022       |3 Series|1579384             |1601902           |1.43                |
-|2023       |3 Series|1601902             |1510756           |-5.69               |
-|2024       |3 Series|1510756             |1511560           |0.05                |
-|2011       |5 Series|1501229             |1552268           |3.40                |
-|2012       |5 Series|1552268             |1536071           |-1.04               |
-|2013       |5 Series|1536071             |1504123           |-2.08               |
-|2014       |5 Series|1504123             |1491198           |-0.86               |
-|2015       |5 Series|1491198             |1606539           |7.73                |
-|2016       |5 Series|1606539             |1677865           |4.44                |
-|2017       |5 Series|1677865             |1631893           |-2.74               |
-|2018       |5 Series|1631893             |1399758           |-14.22              |
-|2019       |5 Series|1399758             |1600027           |14.31               |
-|2020       |5 Series|1600027             |1529725           |-4.39               |
-|2021       |5 Series|1529725             |1355597           |-11.38              |
-|2022       |5 Series|1355597             |1588961           |17.21               |
-|2023       |5 Series|1588961             |1410685           |-11.22              |
-|2024       |5 Series|1410685             |1711580           |21.33               |
-|2011       |7 Series|1388037             |1638828           |18.07               |
-|2012       |7 Series|1638828             |1528381           |-6.74               |
-|2013       |7 Series|1528381             |1519285           |-0.60               |
-|2014       |7 Series|1519285             |1626299           |7.04                |
-|2015       |7 Series|1626299             |1683339           |3.51                |
-|2016       |7 Series|1683339             |1466641           |-12.87              |
-|2017       |7 Series|1466641             |1763339           |20.23               |
-|2018       |7 Series|1763339             |1552221           |-11.97              |
-|2019       |7 Series|1552221             |1442654           |-7.06               |
-|2020       |7 Series|1442654             |1543614           |7.00                |
-|2021       |7 Series|1543614             |1624555           |5.24                |
-|2022       |7 Series|1624555             |1739216           |7.06                |
-|2023       |7 Series|1739216             |1583848           |-8.93               |
-|2024       |7 Series|1583848             |1686209           |6.46                |
-|2011       |I3      |1619401             |1525849           |-5.78               |
-|2012       |I3      |1525849             |1752148           |14.83               |
-|2013       |I3      |1752148             |1495614           |-14.64              |
-|2014       |I3      |1495614             |1443118           |-3.51               |
-|2015       |I3      |1443118             |1628045           |12.81               |
-|2016       |I3      |1628045             |1607308           |-1.27               |
-|2017       |I3      |1607308             |1502611           |-6.51               |
-|2018       |I3      |1502611             |1352709           |-9.98               |
-|2019       |I3      |1352709             |1662586           |22.91               |
-|2020       |I3      |1662586             |1384260           |-16.74              |
-|2021       |I3      |1384260             |1632289           |17.92               |
-|2022       |I3      |1632289             |1533866           |-6.03               |
-|2023       |I3      |1533866             |1372618           |-10.51              |
-|2024       |I3      |1372618             |1621427           |18.13               |
-|2011       |I8      |1626565             |1548054           |-4.83               |
-|2012       |I8      |1548054             |1608873           |3.93                |
-|2013       |I8      |1608873             |1613761           |0.30                |
-|2014       |I8      |1613761             |1475520           |-8.57               |
-|2015       |I8      |1475520             |1653077           |12.03               |
-|2016       |I8      |1653077             |1650583           |-0.15               |
-|2017       |I8      |1650583             |1505168           |-8.81               |
-|2018       |I8      |1505168             |1623682           |7.87                |
-|2019       |I8      |1623682             |1485386           |-8.52               |
-|2020       |I8      |1485386             |1443078           |-2.85               |
-|2021       |I8      |1443078             |1471816           |1.99                |
-|2022       |I8      |1471816             |1592647           |8.21                |
-|2023       |I8      |1592647             |1537056           |-3.49               |
-|2024       |I8      |1537056             |1588625           |3.36                |
-|2011       |M3      |1523792             |1371503           |-9.99               |
-|2012       |M3      |1371503             |1391655           |1.47                |
-|2013       |M3      |1391655             |1466690           |5.39                |
-|2014       |M3      |1466690             |1606468           |9.53                |
-|2015       |M3      |1606468             |1549374           |-3.55               |
-|2016       |M3      |1549374             |1490676           |-3.79               |
-|2017       |M3      |1490676             |1474399           |-1.09               |
-|2018       |M3      |1474399             |1498085           |1.61                |
-|2019       |M3      |1498085             |1405089           |-6.21               |
-|2020       |M3      |1405089             |1454349           |3.51                |
-|2021       |M3      |1454349             |1547692           |6.42                |
-|2022       |M3      |1547692             |1690554           |9.23                |
-|2023       |M3      |1690554             |1557168           |-7.89               |
-|2024       |M3      |1557168             |1322200           |-15.09              |
-|2011       |M5      |1594989             |1585291           |-0.61               |
-|2012       |M5      |1585291             |1344079           |-15.22              |
-|2013       |M5      |1344079             |1617984           |20.38               |
-|2014       |M5      |1617984             |1339192           |-17.23              |
-|2015       |M5      |1339192             |1440389           |7.56                |
-|2016       |M5      |1440389             |1272223           |-11.68              |
-|2017       |M5      |1272223             |1500767           |17.96               |
-|2018       |M5      |1500767             |1612565           |7.45                |
-|2019       |M5      |1612565             |1664560           |3.22                |
-|2020       |M5      |1664560             |1502663           |-9.73               |
-|2021       |M5      |1502663             |1689063           |12.40               |
-|2022       |M5      |1689063             |1519573           |-10.03              |
-|2023       |M5      |1519573             |1463354           |-3.70               |
-|2024       |M5      |1463354             |1632996           |11.59               |
-|2011       |X1      |1480353             |1694495           |14.47               |
-|2012       |X1      |1694495             |1671189           |-1.38               |
-|2013       |X1      |1671189             |1730904           |3.57                |
-|2014       |X1      |1730904             |1624913           |-6.12               |
-|2015       |X1      |1624913             |1528027           |-5.96               |
-|2016       |X1      |1528027             |1574498           |3.04                |
-|2017       |X1      |1574498             |1415270           |-10.11              |
-|2018       |X1      |1415270             |1376586           |-2.73               |
-|2019       |X1      |1376586             |1681721           |22.17               |
-|2020       |X1      |1681721             |1618766           |-3.74               |
-|2021       |X1      |1618766             |1510193           |-6.71               |
-|2022       |X1      |1510193             |1548116           |2.51                |
-|2023       |X1      |1548116             |1457295           |-5.87               |
-|2024       |X1      |1457295             |1493734           |2.50                |
-|2011       |X3      |1584432             |1502405           |-5.18               |
-|2012       |X3      |1502405             |1643501           |9.39                |
-|2013       |X3      |1643501             |1493613           |-9.12               |
-|2014       |X3      |1493613             |1444087           |-3.32               |
-|2015       |X3      |1444087             |1417693           |-1.83               |
-|2016       |X3      |1417693             |1657972           |16.95               |
-|2017       |X3      |1657972             |1461422           |-11.85              |
-|2018       |X3      |1461422             |1393935           |-4.62               |
-|2019       |X3      |1393935             |1482528           |6.36                |
-|2020       |X3      |1482528             |1372549           |-7.42               |
-|2021       |X3      |1372549             |1484470           |8.15                |
-|2022       |X3      |1484470             |1607566           |8.29                |
-|2023       |X3      |1607566             |1534907           |-4.52               |
-|2024       |X3      |1534907             |1664449           |8.44                |
-|2011       |X5      |1516004             |1427955           |-5.81               |
-|2012       |X5      |1427955             |1500173           |5.06                |
-|2013       |X5      |1500173             |1471064           |-1.94               |
-|2014       |X5      |1471064             |1676666           |13.98               |
-|2015       |X5      |1676666             |1477242           |-11.89              |
-|2016       |X5      |1477242             |1523981           |3.16                |
-|2017       |X5      |1523981             |1499761           |-1.59               |
-|2018       |X5      |1499761             |1497265           |-0.17               |
-|2019       |X5      |1497265             |1670497           |11.57               |
-|2020       |X5      |1670497             |1481542           |-11.31              |
-|2021       |X5      |1481542             |1427546           |-3.64               |
-|2022       |X5      |1427546             |1796846           |25.87               |
-|2023       |X5      |1796846             |1284529           |-28.51              |
-|2024       |X5      |1284529             |1458678           |13.56               |
-|2011       |X6      |1450874             |1439191           |-0.81               |
-|2012       |X6      |1439191             |1397673           |-2.88               |
-|2013       |X6      |1397673             |1505165           |7.69                |
-|2014       |X6      |1505165             |1548954           |2.91                |
-|2015       |X6      |1548954             |1405983           |-9.23               |
-|2016       |X6      |1405983             |1323705           |-5.85               |
-|2017       |X6      |1323705             |1368799           |3.41                |
-|2018       |X6      |1368799             |1485429           |8.52                |
-|2019       |X6      |1485429             |1636973           |10.20               |
-|2020       |X6      |1636973             |1442646           |-11.87              |
-|2021       |X6      |1442646             |1562061           |8.28                |
-|2022       |X6      |1562061             |1701699           |8.94                |
-|2023       |X6      |1701699             |1556438           |-8.54               |
-|2024       |X6      |1556438             |1836396           |17.99               |
+El resultado tiene 154 filas (11 modelos × 14 variaciones). Se muestra la columna `variacion_porcentual` pivotada (modelo × año):
 
+|modelo|2011|2012|2013|2014|2015|2016|2017|2018|2019|2020|2021|2022|2023|2024|
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+|3 Series|-10.6|-6.45|5.11|16.16|-3.69|5.65|-12.54|8.19|-9.88|5.32|2.71|1.43|-5.69|0.05|
+|5 Series|3.4|-1.04|-2.08|-0.86|7.73|4.44|-2.74|-14.22|14.31|-4.39|-11.38|17.21|-11.22|21.33|
+|7 Series|18.07|-6.74|-0.6|7.04|3.51|-12.87|20.23|-11.97|-7.06|7.0|5.24|7.06|-8.93|6.46|
+|I3|-5.78|14.83|-14.64|-3.51|12.81|-1.27|-6.51|-9.98|22.91|-16.74|17.92|-6.03|-10.51|18.13|
+|I8|-4.83|3.93|0.3|-8.57|12.03|-0.15|-8.81|7.87|-8.52|-2.85|1.99|8.21|-3.49|3.36|
+|M3|-9.99|1.47|5.39|9.53|-3.55|-3.79|-1.09|1.61|-6.21|3.51|6.42|9.23|-7.89|-15.09|
+|M5|-0.61|-15.22|20.38|-17.23|7.56|-11.68|17.96|7.45|3.22|-9.73|12.4|-10.03|-3.7|11.59|
+|X1|14.47|-1.38|3.57|-6.12|-5.96|3.04|-10.11|-2.73|22.17|-3.74|-6.71|2.51|-5.87|2.5|
+|X3|-5.18|9.39|-9.12|-3.32|-1.83|16.95|-11.85|-4.62|6.36|-7.42|8.15|8.29|-4.52|8.44|
+|X5|-5.81|5.06|-1.94|13.98|-11.89|3.16|-1.59|-0.17|11.57|-11.31|-3.64|25.87|-28.51|13.56|
+|X6|-0.81|-2.88|7.69|2.91|-9.23|-5.85|3.41|8.52|10.2|-11.87|8.28|8.94|-8.54|17.99|
 
-### Pregunta 4: ¿Qué combinación de color + modelo es más popular en cada región?
+![P3 - Variación interanual](dashboard/graficos/p3_variacion_interanual.png)
+
+**Lectura:** ningún modelo crece ni cae de forma sostenida: todos alternan años positivos y negativos (entre 5 y 8 años de crecimiento sobre 14). Comparando extremos del período (2010 vs 2024), los que más crecieron son **X6 (+26,6 %)**, **7 Series (+21,5 %)** y **5 Series (+14,0 %)**; los que más cayeron son **M3 (−13,2 %)**, **3 Series (−8,3 %)** y **X5 (−3,8 %)**. La mayor suba puntual fue X5 en 2022 (+25,9 %) y la mayor caída, X5 en 2023 (−28,5 %). Como la serie es muy volátil, el 2010 vs 2024 es un indicio, no una tendencia firme.
+
+---
+
+## Pregunta 4: ¿Qué combinación de color + modelo es más popular en cada región?
+
 ```sql
 WITH RankCombinaciones AS (
-    SELECT 
-        r.nombre_region, 
-        p.modelo, 
-        c.nombre_color, 
-        SUM(h.volumen_ventas) as total_ventas,
-        ROW_NUMBER() OVER(PARTITION BY r.nombre_region ORDER BY SUM(h.volumen_ventas) DESC) as ranking
+    SELECT r.nombre_region, p.modelo, c.nombre_color,
+           SUM(h.volumen_ventas) AS total_ventas,
+           ROW_NUMBER() OVER (PARTITION BY r.nombre_region ORDER BY SUM(h.volumen_ventas) DESC) AS ranking
     FROM Hecho_Ventas h
-    JOIN Dim_Region r ON h.id_region = r.id_region
-    JOIN Dim_Producto p ON h.id_producto = p.id_producto
-    JOIN Dim_Color c ON h.id_color = c.id_color
+    JOIN Dim_Region r    ON h.id_region = r.id_region
+    JOIN Dim_Producto p  ON h.id_producto = p.id_producto
+    JOIN Dim_Color c     ON h.id_color = c.id_color
     GROUP BY r.nombre_region, p.modelo, c.nombre_color
 )
 SELECT nombre_region, modelo, nombre_color, total_ventas
@@ -466,22 +180,25 @@ FROM RankCombinaciones
 WHERE ranking = 1;
 ```
 
-|nombre_region|modelo  |nombre_color|total_ventas|
-|-------------|--------|------------|------------|
-|Africa       |X5      |Black       |798731      |
-|Asia         |X1      |Silver      |825322      |
-|Europe       |I8      |Black       |786241      |
-|Middle East  |7 Series|Red         |818104      |
-|North America|X1      |Silver      |796982      |
-|South America|5 Series|White       |754550      |
+|nombre_region|modelo|nombre_color|total_ventas|
+|---|---|---|---|
+|Africa|X5|Black|798731|
+|Asia|X1|Silver|825322|
+|Europe|I8|Black|786241|
+|Middle East|7 Series|Red|818104|
+|North America|X1|Silver|796982|
+|South America|5 Series|White|754550|
 
+![P4 - Modelo + color por región](dashboard/graficos/p4_modelo_color_region.png)
 
+**Lectura:** cada región tiene una combinación líder distinta; X1 Silver se repite en Asia y Norteamérica. Los totales de las seis ganadoras van de 754.550 a 825.322 unidades, así que las diferencias de popularidad son moderadas.
 
-### Pregunta 5: ¿Cómo varía el precio promedio según región?
+---
+
+## Pregunta 5: ¿Cómo varía el precio promedio según región?
+
 ```sql
-SELECT 
-    r.nombre_region, 
-    ROUND(AVG(h.precio_usd), 2) as precio_promedio
+SELECT r.nombre_region, ROUND(AVG(h.precio_usd), 2) AS precio_promedio
 FROM Hecho_Ventas h
 JOIN Dim_Region r ON h.id_region = r.id_region
 GROUP BY r.nombre_region
@@ -489,10 +206,21 @@ ORDER BY precio_promedio DESC;
 ```
 
 |nombre_region|precio_promedio|
-|-------------|---------------|
-|Asia         |75570.08       |
-|South America|75391.67       |
-|Africa       |74982.44       |
-|Europe       |74944.27       |
-|North America|74763.78       |
-|Middle East  |74589.44       |
+|---|---|
+|Asia|75570.08|
+|South America|75391.67|
+|Africa|74982.44|
+|Europe|74944.27|
+|North America|74763.78|
+|Middle East|74589.44|
+
+![P5 - Precio promedio por región](dashboard/graficos/p5_precio_region.png)
+
+**Lectura:** el precio es casi idéntico entre regiones: la diferencia entre la más cara (Asia, USD 75.570) y la más barata (Middle East, USD 74.589) es de unos USD 980, aproximadamente 1,3 %. El eje del gráfico parte de cero para no exagerar esa diferencia.
+
+---
+
+## Nota metodológica
+
+- `precio_usd` en `Hecho_Ventas` ya es el promedio del grupo (año, modelo, región, combustible, color). Los `AVG` de las preguntas 2 y 5 son entonces promedios de promedios, sin ponderar por volumen. Es una consecuencia de la granularidad elegida en el Paso 2; para este análisis la diferencia es marginal.
+- Los modelos `i3` e `i8` figuran como `I3` / `I8` en las dimensiones por el `str.title()` del ETL; en los gráficos se muestran con su nombre original.
