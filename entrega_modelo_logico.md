@@ -40,8 +40,8 @@ El dataset y los requerimientos del proyecto responden a un único proceso anal�
 Se define una tabla de hechos central denominada **Hecho_Ventas**:
 
 - **Nombre de la tabla:** `Hecho_Ventas`.
-- **Clave Primaria Compuesta (PK):** integrada por las 5 claves foráneas de las dimensiones relacionadas: `(id_tiempo, id_producto, id_region, id_combustible, id_color)`.
-- **Claves Foráneas (FK):**
+- **Clave Primaria (PK):** clave subrogada propia de la tabla de hechos, `id_venta` (Entero, autoincremental). Se corrigió respecto a una versión anterior que usaba como PK la combinación de las 5 claves foráneas.
+- **Claves Foráneas (FK):** las 5 claves de las dimensiones relacionadas quedan como columnas normales de la tabla (ya no forman parte de la clave primaria):
   - `id_tiempo` → referencia a `Dim_Tiempo.id_tiempo`.
   - `id_producto` → referencia a `Dim_Producto.id_producto`.
   - `id_region` → referencia a `Dim_Region.id_region`.
@@ -85,11 +85,12 @@ erDiagram
     }
 
     Hecho_Ventas {
-        INT id_tiempo PK, FK
-        INT id_producto PK, FK
-        INT id_region PK, FK
-        INT id_combustible PK, FK
-        INT id_color PK, FK
+        INT id_venta PK
+        INT id_tiempo FK
+        INT id_producto FK
+        INT id_region FK
+        INT id_combustible FK
+        INT id_color FK
         INT volumen_ventas
         DECIMAL precio_usd
     }
