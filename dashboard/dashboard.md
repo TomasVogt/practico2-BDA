@@ -1,8 +1,6 @@
 # Dashboard Analítico: Modelo Estrella Ventas BMW (`dw_bmw_ventas`)
 
-Respuesta a cada pregunta de negocio del Paso 1. Todas las consultas se ejecutaron en MySQL **sobre el modelo estrella** (`Hecho_Ventas` + `Dim_*`), no sobre el CSV original. Los resultados se exportaron a `pregunta1.csv … pregunta5.csv` y los gráficos se generaron con Python (`matplotlib`) a partir de esos archivos (script: `graficos.py`; imágenes en `graficos/`).
-
-> **Aclaración sobre la lectura de los datos.** El dataset de Kaggle tiene una distribución prácticamente uniforme (parece generado sintéticamente): casi todas las diferencias entre categorías son chicas. Por eso en cada pregunta se indica qué diferencias son reales y cuáles están dentro del ruido.
+> **Aclaración sobre la lectura de los datos.** El dataset de Kaggle tiene una distribución prácticamente uniforme (es decir que parece generado sintéticamente): casi todas las diferencias entre categorías son chicas. Por eso en cada pregunta se indica qué diferencias son reales y cuáles están dentro del ruido.
 
 ---
 
@@ -82,7 +80,7 @@ La columna `participacion_%` es el indicador "Participación % por tipo de combu
 |2024|Hybrid|4647195|26.51|
 |2024|Petrol|4233484|24.15|
 
-![P1 - Mezcla de combustibles](dashboard/graficos/p1_mezcla_combustibles.png)
+![P1 - Mezcla de combustibles](graficos/p1_mezcla_combustibles.png)
 
 **Lectura:** la mezcla casi no cambió. Los cuatro combustibles se mueven entre 23,4 % y 26,7 % del volumen anual, sin una tendencia sostenida: no hay un desplazamiento de combustión hacia híbrido o eléctrico. Híbrido es el que tiene mayor participación promedio (25,5 %) y cierra 2024 como líder (26,5 %); Diésel y Nafta no muestran caída sostenida.
 
@@ -99,7 +97,7 @@ GROUP BY t.anio, p.modelo
 ORDER BY t.anio, p.modelo;
 ```
 
-El resultado tiene 165 filas (11 modelos × 15 años). Se muestra pivotado (modelo × año) para que sea legible; los valores son exactamente los de la consulta.
+El resultado tiene 165 filas (11 modelos × 15 años; completo en `resultados/pregunta2.csv`). Se muestra pivotado (modelo × año) para que sea legible; los valores son exactamente los de la consulta.
 
 |modelo|2010|2011|2012|2013|2014|2015|2016|2017|2018|2019|2020|2021|2022|2023|2024|
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -115,7 +113,7 @@ El resultado tiene 165 filas (11 modelos × 15 años). Se muestra pivotado (mode
 |X5|75534.06|72985.77|77041.01|75198.48|72963.27|73853.34|75798.88|77697.39|78315.29|73302.2|72708.28|76849.08|73068.19|72643.12|73466.98|
 |X6|73463.96|73071.49|72640.22|71684.51|77052.66|72198.6|73664.83|77609.76|75011.46|73425.99|75146.6|73622.69|76692.45|75274.11|75274.07|
 
-![P2 - Precio promedio por modelo y año](dashboard/graficos/p2_precio_modelo_anio.png)
+![P2 - Precio promedio por modelo y año](graficos/p2_precio_modelo_anio.png)
 
 **Lectura:** el precio promedio se mantiene en una banda angosta, entre USD 70.739 (M5, 2010) y USD 79.039 (X1, 2014). No hay inflación de precios ni un modelo que se despegue sistemáticamente de los demás.
 
@@ -140,7 +138,7 @@ JOIN VentasAnuales v2 ON v1.modelo = v2.modelo AND v1.anio = v2.anio + 1
 ORDER BY v1.modelo, v1.anio;
 ```
 
-El resultado tiene 154 filas (11 modelos × 14 variaciones). Se muestra la columna `variacion_porcentual` pivotada (modelo × año):
+El resultado tiene 154 filas (11 modelos × 14 variaciones; completo en `resultados/pregunta3.csv`). Se muestra la columna `variacion_porcentual` pivotada (modelo × año):
 
 |modelo|2011|2012|2013|2014|2015|2016|2017|2018|2019|2020|2021|2022|2023|2024|
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -156,7 +154,7 @@ El resultado tiene 154 filas (11 modelos × 14 variaciones). Se muestra la colum
 |X5|-5.81|5.06|-1.94|13.98|-11.89|3.16|-1.59|-0.17|11.57|-11.31|-3.64|25.87|-28.51|13.56|
 |X6|-0.81|-2.88|7.69|2.91|-9.23|-5.85|3.41|8.52|10.2|-11.87|8.28|8.94|-8.54|17.99|
 
-![P3 - Variación interanual](dashboard/graficos/p3_variacion_interanual.png)
+![P3 - Variación interanual](graficos/p3_variacion_interanual.png)
 
 **Lectura:** ningún modelo crece ni cae de forma sostenida: todos alternan años positivos y negativos (entre 5 y 8 años de crecimiento sobre 14). Comparando extremos del período (2010 vs 2024), los que más crecieron son **X6 (+26,6 %)**, **7 Series (+21,5 %)** y **5 Series (+14,0 %)**; los que más cayeron son **M3 (−13,2 %)**, **3 Series (−8,3 %)** y **X5 (−3,8 %)**. La mayor suba puntual fue X5 en 2022 (+25,9 %) y la mayor caída, X5 en 2023 (−28,5 %). Como la serie es muy volátil, el 2010 vs 2024 es un indicio, no una tendencia firme.
 
@@ -189,7 +187,7 @@ WHERE ranking = 1;
 |North America|X1|Silver|796982|
 |South America|5 Series|White|754550|
 
-![P4 - Modelo + color por región](dashboard/graficos/p4_modelo_color_region.png)
+![P4 - Modelo + color por región](graficos/p4_modelo_color_region.png)
 
 **Lectura:** cada región tiene una combinación líder distinta; X1 Silver se repite en Asia y Norteamérica. Los totales de las seis ganadoras van de 754.550 a 825.322 unidades, así que las diferencias de popularidad son moderadas.
 
@@ -214,7 +212,7 @@ ORDER BY precio_promedio DESC;
 |North America|74763.78|
 |Middle East|74589.44|
 
-![P5 - Precio promedio por región](dashboard/graficos/p5_precio_region.png)
+![P5 - Precio promedio por región](graficos/p5_precio_region.png)
 
 **Lectura:** el precio es casi idéntico entre regiones: la diferencia entre la más cara (Asia, USD 75.570) y la más barata (Middle East, USD 74.589) es de unos USD 980, aproximadamente 1,3 %. El eje del gráfico parte de cero para no exagerar esa diferencia.
 

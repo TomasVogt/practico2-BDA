@@ -71,8 +71,6 @@ CREATE TABLE Hecho_Ventas (
 
 -- ---------------------------------------------------------------------
 -- Índices adicionales sobre la tabla de hechos
--- (útiles para consultas de BI que filtran o agrupan por una sola
--- dimensión sin recorrer toda la clave compuesta)
 -- ---------------------------------------------------------------------
 
 CREATE INDEX idx_hv_tiempo       ON Hecho_Ventas (id_tiempo);
