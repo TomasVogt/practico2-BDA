@@ -48,6 +48,7 @@ CREATE TABLE Dim_Color (
 -- ---------------------------------------------------------------------
 
 CREATE TABLE Hecho_Ventas (
+    id_venta        INT AUTO_INCREMENT PRIMARY KEY,
     id_tiempo       INT NOT NULL,
     id_producto     INT NOT NULL,
     id_region       INT NOT NULL,
@@ -55,8 +56,6 @@ CREATE TABLE Hecho_Ventas (
     id_color        INT NOT NULL,
     volumen_ventas  INT NOT NULL,
     precio_usd      DECIMAL(10,2) NOT NULL,
-
-    PRIMARY KEY (id_tiempo, id_producto, id_region, id_combustible, id_color),
 
     CONSTRAINT fk_hv_tiempo
         FOREIGN KEY (id_tiempo) REFERENCES Dim_Tiempo (id_tiempo),
